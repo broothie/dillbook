@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/broothie/dillbook/application"
 	"github.com/broothie/dillbook/config"
 	"github.com/broothie/dillbook/model"
+	"github.com/broothie/dillbook/server"
 	_ "github.com/joho/godotenv/autoload"
 	"go.uber.org/zap"
 )
@@ -24,7 +24,7 @@ func main() {
 		logger, err = zap.NewProduction()
 	}
 
-	app, err := application.New(cfg, logger)
+	app, err := server.New(cfg, logger)
 	if err != nil {
 		logger.Error("failed to create application", zap.Error(err))
 		return

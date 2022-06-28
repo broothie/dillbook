@@ -6,9 +6,9 @@ import (
 )
 
 type Config struct {
-	Environment string `envconfig:"ENVIRONMENT" required:"true"`
-	Port        int    `envconfig:"PORT" default:"8080"`
-	DatabaseURL string `envconfig:"DATABASE_URL" required:"true" json:"-"`
+	Environment        string `envconfig:"ENVIRONMENT" required:"true"`
+	Port               int    `envconfig:"PORT" default:"8080"`
+	DBConnectionString string `envconfig:"DB_CONNECTION_STRING" required:"true" json:"-"`
 }
 
 func New() (*Config, error) {

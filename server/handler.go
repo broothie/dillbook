@@ -1,4 +1,4 @@
-package application
+package server
 
 import (
 	"net/http"
@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (a *Application) Handler() http.Handler {
+func (s *Server) Handler() http.Handler {
 	r := chi.NewRouter()
 
 	// Middleware
@@ -17,26 +17,26 @@ func (a *Application) Handler() http.Handler {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Use(a.zapLoggerMiddleware)
+	r.Use(s.zapLoggerMiddleware)
 
 	// Routes
-	r.Get("/", a.Index)
+	r.Get("/", s.Index)
 
 	r.Route("/courts", func(r chi.Router) {
-		r.Get("/new", a.NewCourt)
-		r.Post("/", a.CreateCourt)
+		r.Get("/new", s.NewCourt)
+		r.Post("/", s.CreateCourt)
 
 		r.Route("/{courtID}", func(r chi.Router) {
-			r.Get("/", a.ShowCourt)
+			r.Get("/", s.ShowCourt)
 		})
 	})
 
 	return r
 }
 
-func (a *Application) zapLoggerMiddleware(next http.Handler) http.Handler {
+func (s *Server) zapLoggerMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		next.ServeHTTP(w, r.WithContext(zapctx.WithLogger(r.Context(), a.logger.With(
+		next.ServeHTTP(w, r.WithContext(zapctx.WithLogger(r.Context(), s.logger.With(
 			zap.String("request_id", r.Header.Get(middleware.RequestIDHeader)),
 		))))
 	})

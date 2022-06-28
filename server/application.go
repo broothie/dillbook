@@ -1,4 +1,4 @@
-package application
+package server
 
 import (
 	"database/sql"
@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Application struct {
+type Server struct {
 	DB     *gorm.DB
 	logger *zap.Logger
 	config *config.Config
@@ -20,8 +20,8 @@ type Application struct {
 	conn   *sql.DB
 }
 
-func New(cfg *config.Config, logger *zap.Logger) (*Application, error) {
-	conn, err := sql.Open("postgres", cfg.DatabaseURL)
+func New(cfg *config.Config, logger *zap.Logger) (*Server, error) {
+	conn, err := sql.Open("postgres", cfg.DBConnectionString)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to open sql connection")
 	}
@@ -31,7 +31,7 @@ func New(cfg *config.Config, logger *zap.Logger) (*Application, error) {
 		return nil, errors.Wrap(err, "failed to open gorm")
 	}
 
-	return &Application{
+	return &Server{
 		logger: logger,
 		config: cfg,
 		render: render.New(render.Options{
@@ -44,6 +44,6 @@ func New(cfg *config.Config, logger *zap.Logger) (*Application, error) {
 	}, nil
 }
 
-func (a *Application) Close() error {
-	return a.conn.Close()
+func (s *Server) Close() error {
+	return s.conn.Close()
 }
