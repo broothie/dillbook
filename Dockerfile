@@ -7,5 +7,6 @@ RUN go build cmd/server/main.go
 
 FROM alpine:3.16
 COPY --from=builder /go/src/github.com/broothie/dillbook/main main
+COPY --from=builder /go/src/github.com/broothie/dillbook/templates templates
 
 CMD ["./main"]
