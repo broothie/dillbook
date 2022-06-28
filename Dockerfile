@@ -1,11 +1,11 @@
-FROM ruby:3.1.2
-RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
+FROM golang:1.18-alpine AS builder
+RUN apk add --update ca-certificates
 
-WORKDIR /usr/src/app
+WORKDIR /go/src/github.com/broothie/dillbook
 COPY . .
+RUN go build cmd/server/main.go
 
-RUN gem install bundler -v 2.3.7
-RUN bundle config set without development
-RUN bundle
+FROM alpine:3.16
+COPY --from=builder /go/src/github.com/broothie/dillbook/main main
 
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
+CMD ["./main"]
