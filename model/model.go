@@ -9,6 +9,12 @@ type User struct {
 	Bookings []Booking `gorm:"many2many:user_bookings"`
 }
 
+type Location struct {
+	gorm.Model
+	Name   string
+	Courts []Court
+}
+
 type Court struct {
 	gorm.Model
 	Name     string

@@ -8,10 +8,6 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func (s *Server) Index(w http.ResponseWriter, r *http.Request) {
-	s.render.HTML(w, http.StatusOK, "index", nil)
-}
-
 func (s *Server) NewCourt(w http.ResponseWriter, r *http.Request) {
 	s.render.HTML(w, http.StatusOK, "courts/new", model.Court{Name: r.FormValue("name")})
 }

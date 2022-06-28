@@ -22,6 +22,15 @@ func (s *Server) Handler() http.Handler {
 	// Routes
 	r.Get("/", s.Index)
 
+	r.Route("/users", func(r chi.Router) {
+		r.Get("/new", s.NewUser)
+		r.Post("/", s.CreateUser)
+
+		r.Route("/{userID}", func(r chi.Router) {
+			r.Get("/", s.ShowUser)
+		})
+	})
+
 	r.Route("/courts", func(r chi.Router) {
 		r.Get("/new", s.NewCourt)
 		r.Post("/", s.CreateCourt)
@@ -32,6 +41,10 @@ func (s *Server) Handler() http.Handler {
 	})
 
 	return r
+}
+
+func (s *Server) Index(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/courts/new", http.StatusPermanentRedirect)
 }
 
 func (s *Server) zapLoggerMiddleware(next http.Handler) http.Handler {
