@@ -72,3 +72,5 @@ group :test do
 end
 
 gem "dotenv-rails", "~> 2.7"
+
+gem "rspec-rails", "~> 5.1"
