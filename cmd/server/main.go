@@ -24,18 +24,18 @@ func main() {
 		logger, err = zap.NewProduction()
 	}
 
-	app, err := server.New(cfg, logger)
+	srv, err := server.New(cfg, logger)
 	if err != nil {
 		logger.Error("failed to create application", zap.Error(err))
 		return
 	}
 	defer func() {
-		if err := app.Close(); err != nil {
+		if err := srv.Close(); err != nil {
 			logger.Error("failed to close application", zap.Error(err))
 		}
 	}()
 
-	if err := app.DB.AutoMigrate(
+	if err := srv.DB.AutoMigrate(
 		new(model.User),
 		new(model.Court),
 		new(model.Booking),
@@ -45,7 +45,7 @@ func main() {
 	}
 
 	logger.Info("starting server", zap.Any("config", cfg))
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), app.Handler()); err != nil && err != http.ErrServerClosed {
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), srv.Handler()); err != nil && err != http.ErrServerClosed {
 		logger.Error("server error", zap.Error(err))
 	}
 }

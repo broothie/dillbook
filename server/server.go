@@ -2,8 +2,10 @@ package server
 
 import (
 	"database/sql"
+	"net/http"
 
 	"github.com/broothie/dillbook/config"
+	"github.com/gorilla/schema"
 	_ "github.com/lib/pq"
 	"github.com/pkg/errors"
 	"github.com/unrolled/render"
@@ -13,11 +15,12 @@ import (
 )
 
 type Server struct {
-	DB     *gorm.DB
-	logger *zap.Logger
-	config *config.Config
-	render *render.Render
-	conn   *sql.DB
+	DB          *gorm.DB
+	logger      *zap.Logger
+	config      *config.Config
+	render      *render.Render
+	conn        *sql.DB
+	formDecoder *schema.Decoder
 }
 
 func New(cfg *config.Config, logger *zap.Logger) (*Server, error) {
@@ -32,6 +35,7 @@ func New(cfg *config.Config, logger *zap.Logger) (*Server, error) {
 	}
 
 	return &Server{
+		DB:     db,
 		logger: logger,
 		config: cfg,
 		render: render.New(render.Options{
@@ -39,11 +43,23 @@ func New(cfg *config.Config, logger *zap.Logger) (*Server, error) {
 			Extensions:    []string{".gohtml"},
 			IsDevelopment: cfg.IsDevelopment(),
 		}),
-		conn: conn,
-		DB:   db,
+		conn:        conn,
+		formDecoder: schema.NewDecoder(),
 	}, nil
 }
 
 func (s *Server) Close() error {
 	return s.conn.Close()
+}
+
+func (s *Server) decodeForm(r *http.Request, target any) error {
+	if err := r.ParseForm(); err != nil {
+		return errors.Wrap(err, "failed to parse form")
+	}
+
+	if err := s.formDecoder.Decode(target, r.PostForm); err != nil {
+		return errors.Wrap(err, "failed to decode form")
+	}
+
+	return nil
 }

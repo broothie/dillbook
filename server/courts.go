@@ -9,11 +9,22 @@ import (
 )
 
 func (s *Server) NewCourt(w http.ResponseWriter, r *http.Request) {
-	s.render.HTML(w, http.StatusOK, "courts/new", model.Court{Name: r.FormValue("name")})
+	var court model.Court
+	if err := s.decodeForm(r, &court); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	s.render.HTML(w, http.StatusOK, "courts/new", map[string]any{"court": court})
 }
 
 func (s *Server) CreateCourt(w http.ResponseWriter, r *http.Request) {
-	court := &model.Court{Name: r.FormValue("name")}
+	var court model.Court
+	if err := s.decodeForm(r, &court); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	if err := s.DB.Create(court).Error; err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -29,5 +40,5 @@ func (s *Server) ShowCourt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.render.HTML(w, http.StatusOK, "courts/show", court)
+	s.render.HTML(w, http.StatusOK, "courts/show", map[string]any{"court": court})
 }

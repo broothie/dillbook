@@ -9,16 +9,20 @@ import (
 )
 
 func (s *Server) NewUser(w http.ResponseWriter, r *http.Request) {
-	s.render.HTML(w, http.StatusOK, "users/new", model.User{
-		Name:  r.FormValue("name"),
-		Email: r.FormValue("email"),
-	})
+	var user model.User
+	if err := s.decodeForm(r, &user); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	s.render.HTML(w, http.StatusOK, "users/new", map[string]any{"user": user})
 }
 
 func (s *Server) CreateUser(w http.ResponseWriter, r *http.Request) {
-	user := &model.User{
-		Name:  r.FormValue("name"),
-		Email: r.FormValue("email"),
+	var user model.User
+	if err := s.decodeForm(r, &user); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	if err := s.DB.Create(user).Error; err != nil {
@@ -36,5 +40,5 @@ func (s *Server) ShowUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.render.HTML(w, http.StatusOK, "users/show", user)
+	s.render.HTML(w, http.StatusOK, "users/show", map[string]any{"user": user})
 }
