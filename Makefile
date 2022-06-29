@@ -1,6 +1,9 @@
 
 list:
-	cat Makefile
+	@ cat Makefile
+
+gin:
+	gin -i -d cmd/server
 
 psql:
-	psql -h localhost -U pguser -d postgres
+	@ psql 'postgres://pguser:pgpassword@localhost/postgres'

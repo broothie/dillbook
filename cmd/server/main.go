@@ -64,10 +64,5 @@ func initDB(srv *server.Server, logger *zap.Logger) error {
 		return errors.Wrap(err, "failed to auto migrate db")
 	}
 
-	logger.Info("creating extensions")
-	if err := srv.DB.Exec(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`).Error; err != nil {
-		return errors.Wrap(err, "failed to create uuid-ossp db extension")
-	}
-
 	return nil
 }

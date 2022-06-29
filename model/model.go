@@ -3,12 +3,22 @@ package model
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
-type Location struct {
+type Base struct {
 	gorm.Model
-	ID          string `gorm:"type:uuid;default:uuid_generate_v4();"`
+	ID string `gorm:"type:uuid;"`
+}
+
+func (b *Base) BeforeCreate(*gorm.DB) error {
+	b.ID = uuid.NewString()
+	return nil
+}
+
+type Location struct {
+	Base
 	Name        string `gorm:"not null;"`
 	Address     string `gorm:"not null;"`
 	Description string
@@ -16,8 +26,7 @@ type Location struct {
 }
 
 type Court struct {
-	gorm.Model
-	ID         string `gorm:"type:uuid;default:uuid_generate_v4();"`
+	Base
 	Name       string `gorm:"not null;"`
 	LocationID string `gorm:"not null;"`
 	Location   Location
@@ -25,8 +34,7 @@ type Court struct {
 }
 
 type Booking struct {
-	gorm.Model
-	ID          string `gorm:"type:uuid;default:uuid_generate_v4();"`
+	Base
 	Name        string
 	Email       string
 	PhoneNumber string
