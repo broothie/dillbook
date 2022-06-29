@@ -1,10 +1,21 @@
-<form action="/courts" method="post">
-    <div>
-        <label for="name">Name</label>
-        <input id="name" name="name" type="text">
-    </div>
+<div class="container">
+    <div class="row px-3">
+        <form action="/locations/{{ .locationID }}/courts" method="post" class="mx-auto col-sm-6 border border-dark border-2 rounded-4 p-4 bg-warning">
+            <h4>Add a new court</h4>
 
-    <div>
-        <input type="submit">
+            <div class="mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input
+                    value="{{ .court.Name }}"
+                    id="name"
+                    name="name"
+                    type="text"
+                    required
+                    class="form-control p-2 border border-dark border-2 rounded-2"
+                >
+            </div>
+
+            <input type="submit" class="btn btn-dark fw-bold float-end">
+        </form>
     </div>
-</form>
+</div>

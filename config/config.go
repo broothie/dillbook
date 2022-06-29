@@ -1,8 +1,14 @@
 package config
 
 import (
+	"log"
+	"os"
+	"time"
+
 	"github.com/kelseyhightower/envconfig"
 	"github.com/pkg/errors"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type Config struct {
@@ -22,4 +28,17 @@ func New() (*Config, error) {
 
 func (c *Config) IsDevelopment() bool {
 	return c.Environment == "development"
+}
+
+func (c *Config) GormConfig() *gorm.Config {
+	return &gorm.Config{
+		Logger: logger.New(
+			log.New(os.Stdout, "", log.LstdFlags),
+			logger.Config{
+				SlowThreshold: 200 * time.Millisecond,
+				Colorful:      c.IsDevelopment(),
+				LogLevel:      logger.Info,
+			},
+		),
+	}
 }

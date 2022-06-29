@@ -1,0 +1,20 @@
+<div class="container">
+    <div class="row px-3">
+        <div class="mx-auto col-sm-10 border border-dark border-2 rounded-4 p-4 bg-warning">
+            <h3>{{ .location.Name }}</h3>
+            <p>{{ .location.Address }}</p>
+
+            <a href="/locations/{{ .location.ID }}/courts/new" class="btn btn-dark float-end fw-bold">Add a court</a>
+        </div>
+    </div>
+
+    <div class="row px-3">
+        <div class="grid">
+            {{ range $court := .location.Courts }}
+                <div class="g-col-4">
+                    <p>{{ $court.Name }}</p>
+                </div>
+            {{ end }}
+        </div>
+    </div>
+</div>

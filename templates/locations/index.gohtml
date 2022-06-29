@@ -1,0 +1,22 @@
+{{ $gridFraction := divide 12 .gridWidth }}
+
+<div class="container px-3">
+    <div class="row mb-3">
+        <a href="/locations/new" class="btn btn-info border border-dark border-2 rounded-2 fw-bold">Add a location</a>
+    </div>
+
+    {{ range $chunk := .chunkedLocations }}
+        <div class="row">
+            {{ range $location := $chunk }}
+                <div class="col-sm-{{ $gridFraction }} p-1">
+                    <a href="/locations/{{ $location.ID }}" class="text-dark text-decoration-none">
+                        <div class="p-3 border border-dark border-2 rounded-2 bg-warning">
+                            <h4>{{ $location.Name }}</h4>
+                            <p>{{ len $location.Courts }} courts</p>
+                        </div>
+                    </a>
+                </div>
+            {{ end }}
+        </div>
+    {{ end }}
+</div>
